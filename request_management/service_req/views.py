@@ -76,12 +76,11 @@ class ServiceRequestUpdateView(UpdateView):
             raise PermissionDenied("Only pending service requests can be updated.")
         
     def form_valid(self, form):
-        # Before saving, check if the status is 'Resolved' and resolved_date is null
-        if form.cleaned_data['status'] == 'Resolved' and not form.instance.resolved_date:
-            # Set the resolved_date to the current date
-            form.instance.resolved_date = timezone.now()
-
-        # Save the form data (this will save the changes)
+        # Safely check if 'status' exists in cleaned_data
+        if hasattr(form.instance, 'status') and form.cleaned_data.get('status') == 'Resolved':
+            if not form.instance.date_resolved:  # Ensure resolved_date is set only once
+                form.instance.date_resolved = timezone.now()
+                
         return super().form_valid(form)
 
     def get_success_url(self):
