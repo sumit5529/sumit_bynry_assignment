@@ -56,6 +56,7 @@
                 <th>Resovled Date</th>
                 <th>Actions</th>
                 <th>Support Instruction</th>
+                {% comment %} <th> File </th> {% endcomment %}
             </tr>
         </thead>
         <tbody>
@@ -78,6 +79,9 @@
                               {{request.support}}
                         
                         </td>
+                        {% comment %} <td>
+                            <a href="{{ request.file.url }}">{{ request.title }}</a>
+                        </td> {% endcomment %}
                     </tr>
                 {% endfor %}
             {% else %}

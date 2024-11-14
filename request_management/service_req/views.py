@@ -57,7 +57,7 @@ class ServiceRequestUpdateView(UpdateView):
             allowed_fields = ['status', 'support']
         else:
             # Non-CSR users can modify all fields
-            allowed_fields = ['request_type', 'details',]
+            allowed_fields = ['request_type', 'details']
         
         # Filter fields that exist in the form
         form.fields = {key: form.fields[key] for key in allowed_fields if key in form.fields}

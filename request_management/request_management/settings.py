@@ -129,3 +129,8 @@ AUTH_USER_MODEL = 'customer.CustomUser'
 LOGIN_REDIRECT_URL = 'customer:dashboard_redirect'
 LOGOUT_REDIRECT_URL = 'customer:dashboard'
 LOGIN_URL = 'customer:login'
+
+# settings.py
+import os
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Path where media is stored
+MEDIA_URL = '/media/'  # URL to access media through the browser
