@@ -26,9 +26,9 @@
     </header>
 
 
-    {% comment %} <a href="{% url 'requests:create_request' %}" class="button">Create New Request</a> {% endcomment %}
-    <a href="#" class="button">Create New Request</a>
-    {% comment %} <table>
+    <a href="{% url 'service_req:service_request_create' %}" class="button">Create New Request</a>
+    {% comment %} <a href="#" class="button">Create New Request</a> {% endcomment %}
+{% comment %} <table>
         <tr>
             <th>Request Type</th>
             <th>Status</th>
@@ -39,15 +39,45 @@
             <td>{{ request.request_type }}</td>
             <td>{{ request.status }}</td>
             <td>
-                <a href="{% url 'requests:service_request_detail' request.id %}">Details</a>
+                <a href="{% url 'service_req:service_request_detail' request.pk %}">Details</a>
                 {% if request.status == 'Pending' %}
-                    | <a href="{% url 'requests:update_service_request' request.id %}">Update</a>
-                    | <a href="{% url 'requests:delete_service_request' request.id %}">Delete</a>
+                    | <a href="{% url 'service_req:update_service_request' request.pk %}">Update</a>
+                    | <a href="{% url 'service_req:delete_service_request' request.pk %}">Delete</a>
                 {% endif %}
             </td>
         </tr>
         {% endfor %}
-    </table> {% endcomment %}
+    </table>  {% endcomment %}
+    <table>
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if service_requests.exists %}
+                {% for request in service_requests %}
+                    <tr>
+                        <td>{{ request.request_type }}</td>
+                        <td>{{ request.status }}</td>
+                        <td>
+                            <a href="{% url 'service_req:service_request_detail' request.pk %}">Details</a>
+                            {% if request.status == 'Pending' %}
+                                | <a href="{% url 'service_req:service_request_update' request.pk %}">Update</a>
+                                | <a href="{% url 'service_req:service_request_delete' request.pk %}">Delete</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="3">No service requests available.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
 
 </body>
 </html>

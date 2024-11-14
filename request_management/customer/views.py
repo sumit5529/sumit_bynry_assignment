@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from .forms import CustomUserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.models import Group
-# from requests.models import ServiceRequest
+from service_req.models import ServiceRequest
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -54,8 +54,8 @@ class CustomerDashboardView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Add customer-specific data to the context
-        # customer_service_requests = ServiceRequest.objects.filter(user=self.request.user)
-        customer_service_requests = f"checking list of your request {self.request.user}"
+        customer_service_requests = ServiceRequest.objects.filter(customers=self.request.user)
+        # customer_service_requests = f"checking list of your request {self.request.user}"
         context['service_requests'] = customer_service_requests
         return context
 

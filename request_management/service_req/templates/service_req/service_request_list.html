@@ -1,0 +1,5 @@
+<ul>
+    {% for request in service_requests %}
+        <li><a href="{{ request.get_absolute_url }}">{{ request.name }}</a></li>
+    {% endfor %}
+</ul>
