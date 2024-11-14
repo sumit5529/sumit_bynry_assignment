@@ -36,7 +36,7 @@ class RegisterView(View):
 
 def dashboard_redirect(request):
     if request.user.groups.filter(name='CSR').exists():
-        return redirect('csr:csr_dashboard')
+        return redirect('customer:csr_dashboard')
     else:
         return redirect('customer:dashboard')
 
@@ -66,3 +66,17 @@ from django.contrib.auth.views import LoginView
 class CustomLoginView(LoginView):
     form_class = AuthenticationForm
     template_name = 'customer/login.html'
+
+
+from django.http import HttpResponseForbidden
+from django.views.generic import ListView
+class CSRDashboardView(LoginRequiredMixin, ListView):
+    template_name = 'customer/csr_dashboard.html'
+    context_object_name = 'service_requests'
+
+    def get_queryset(self):
+        # Check if the user belongs to the 'CSR' group
+        if not self.request.user.groups.filter(name='CSR').exists():
+            # If not in the 'CSR' group, return a forbidden response
+            raise HttpResponseForbidden("You do not have permission to view this page.")
+        return ServiceRequest.objects.all()

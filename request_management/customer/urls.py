@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RegisterView, dashboard_redirect,CustomerDashboardView ,CustomLoginView ,career_page# Import views
+from .views import RegisterView, dashboard_redirect,CustomerDashboardView ,CustomLoginView ,CSRDashboardView,career_page# Import views
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
 
@@ -11,7 +11,9 @@ urlpatterns = [
     path('', career_page, name='career'), 
     path('dashboard/', CustomerDashboardView.as_view(), name='dashboard'),
     path('login/', CustomLoginView.as_view(), name='login'),
-    path('logout/', LogoutView.as_view(next_page=reverse_lazy('customer:career')), name='logout')
+    path('logout/', LogoutView.as_view(next_page=reverse_lazy('customer:career')), name='logout'),
+    path('csr-dashboard/', CSRDashboardView.as_view(), name='csr_dashboard'),
+
 
 ]
 

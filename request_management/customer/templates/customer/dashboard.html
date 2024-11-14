@@ -53,7 +53,9 @@
             <tr>
                 <th>Type</th>
                 <th>Status</th>
+                <th>Resovled Date</th>
                 <th>Actions</th>
+                <th>Support Instruction</th>
             </tr>
         </thead>
         <tbody>
@@ -62,12 +64,19 @@
                     <tr>
                         <td>{{ request.request_type }}</td>
                         <td>{{ request.status }}</td>
+                        <td>{{ request.date_resolved }}</td>
                         <td>
                             <a href="{% url 'service_req:service_request_detail' request.pk %}">Details</a>
                             {% if request.status == 'Pending' %}
                                 | <a href="{% url 'service_req:service_request_update' request.pk %}">Update</a>
                                 | <a href="{% url 'service_req:service_request_delete' request.pk %}">Delete</a>
                             {% endif %}
+                            
+                        </td>
+                        <td>
+                          
+                              {{request.support}}
+                        
                         </td>
                     </tr>
                 {% endfor %}

@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.core.exceptions import PermissionDenied
 from .models import ServiceRequest
 from django.contrib.auth.mixins import LoginRequiredMixin
-
+from .forms import ServiceRequestForm
 from django.utils import timezone
 # ServiceRequest Create View
 class ServiceRequestCreateView(LoginRequiredMixin, CreateView):
@@ -37,22 +37,33 @@ class ServiceRequestDetailView(DetailView):
     context_object_name = 'service_request'
 
 # ServiceRequest Update View
+# class ServiceRequestUpdateView(UpdateView):
+#     model = ServiceRequest
+#     fields = [] 
+#     template_name = 'service_req/service_request_form.html'
+
 class ServiceRequestUpdateView(UpdateView):
     model = ServiceRequest
-    fields = ['request_type', 'details', 'status'] 
+    # fields = []  # Placeholder to satisfy Django's requirement
     template_name = 'service_req/service_request_form.html'
+    form_class = ServiceRequestForm
 
-    # def get_fields(self):
-    #     # Get the user from the request
-    #     user = self.request.user
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        user = self.request.user
+        print("Available form fields:", form.fields.keys()) 
+        if user.groups.filter(name='CSR').exists():
+            # CSR users can only modify 'status' and 'support'
+            allowed_fields = ['status', 'support']
+        else:
+            # Non-CSR users can modify all fields
+            allowed_fields = ['request_type', 'details',]
+        
+        # Filter fields that exist in the form
+        form.fields = {key: form.fields[key] for key in allowed_fields if key in form.fields}
 
-    #     # Check if the user belongs to the 'CSR' group
-    #     if user.groups.filter(name='CSR').exists():
-    #         # Allow CSR group members to only modify 'status' and 'details'
-    #         return ['status', 'details']
-    #     else:
-    #         # Non-CSR users can modify all fields
-    #         return ['name', 'description', 'status', 'details']
+        return form
+
 
     def get_object(self, queryset=None):
         # Get the object to be updated
@@ -74,8 +85,9 @@ class ServiceRequestUpdateView(UpdateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        if self.request.user.groups.filter(name='Customer').exists():
-            return reverse_lazy('customer:dashboard')
+        # if self.request.user.groups.filter(name='Customer').exists():
+        #     return reverse_lazy('customer:dashboard')
+        return reverse_lazy ('customer:dashboard_redirect')
 
 # ServiceRequest Delete View
 class ServiceRequestDeleteView(DeleteView):
@@ -84,8 +96,7 @@ class ServiceRequestDeleteView(DeleteView):
     context_object_name = 'service_request'
     def get_object(self, queryset=None):
         obj = super().get_object(queryset)
-        print(f"ok {obj.pending}")
-        print(obj.status)
+      
         if obj.status!='Pending':
             raise PermissionDenied("Only pending services requests can be deleted.")
         if not self.request.user.groups.filter(name='Customer').exists():
